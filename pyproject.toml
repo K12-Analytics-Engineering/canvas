@@ -9,6 +9,13 @@ readme = "README.md"
 python = "3.9.10"
 dbt-bigquery = "^1.5.1"
 dagster-dbt = "0.21.9"
+dagster = "1.5.9"
+dagster-gcp = "0.21.9"
+dagster-k8s = "0.21.9"
+google-cloud-storage = "^2.1.0"
+tenacity = "^8.0.1"
+pydantic = "^2.5.2"
+dagster-webserver = "1.5.9"
 
 [tool.poetry.group.dev.dependencies]
 sqlfluff = "=2.1.1"
