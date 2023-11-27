@@ -23,9 +23,6 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
-vars:
-  DBT_GCS_BUCKET: "dne"
-
 models:
   +persist_docs:
     relation: true

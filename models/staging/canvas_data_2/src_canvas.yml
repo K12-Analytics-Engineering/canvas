@@ -13,10 +13,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_accounts/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_accounts/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_accounts'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_accounts'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -26,10 +26,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignment_groups/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignment_groups/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignment_groups'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignment_groups'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -39,10 +39,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignment_override_students/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignment_override_students/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignment_override_students'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignment_override_students'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -52,10 +52,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignments/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignments/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_assignments'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_assignments'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -65,10 +65,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_course_account_associations/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_course_account_associations/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_course_account_associations'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_course_account_associations'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -78,10 +78,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_course_sections/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_course_sections/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_course_sections'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_course_sections'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -91,10 +91,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_courses/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_courses/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_courses'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_courses'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -104,10 +104,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollment_states/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollment_states/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollment_states'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollment_states'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -117,10 +117,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollment_terms/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollment_terms/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollment_terms'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollment_terms'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -130,10 +130,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollments/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollments/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_enrollments'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_enrollments'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -143,10 +143,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_grading_periods/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_grading_periods/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_grading_periods'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_grading_periods'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -156,10 +156,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_pseudonyms/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_pseudonyms/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_pseudonyms'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_pseudonyms'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -169,10 +169,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_quiz_submissions/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_quiz_submissions/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_quiz_submissions'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_quiz_submissions'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -182,10 +182,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_roles/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_roles/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_roles'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_roles'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -195,10 +195,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_scores/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_scores/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_scores'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_scores'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -208,10 +208,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_submissions/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_submissions/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_submissions'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_submissions'
             partitions:
               - name: date_extracted
                 data_type: timestamp
@@ -221,10 +221,10 @@ sources:
             - name: data
               data_type: json
           external:
-            location: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_users/*'
+            location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_users/*'
             options:
               format: NEWLINE_DELIMITED_JSON
-              hive_partition_uri_prefix: 'gs://{{ var("DBT_GCS_BUCKET") }}/canvasdata2_api/base_canvas_users'
+              hive_partition_uri_prefix: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/canvasdata2_api/base_canvas_users'
             partitions:
               - name: date_extracted
                 data_type: timestamp
