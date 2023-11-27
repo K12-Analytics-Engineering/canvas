@@ -13,8 +13,11 @@ all_upserts as (
     from
         {{ source('staging', table_name) }}
     where
-        json_value(data, '$.meta.action') = 'U'
-        or json_value(data, '$.meta.action') is null
+        json_value(data, '$.key.{{ unique_key_name }}') is not null
+        and (
+            json_value(data, '$.meta.action') = 'U'
+            or json_value(data, '$.meta.action') is null
+        )
 ),
 
 upserts as (
@@ -39,7 +42,8 @@ all_deletes as (
     from
         {{ source('staging', table_name) }}
     where
-        json_value(data, '$.meta.action') = 'D'
+        json_value(data, '$.key.{{ unique_key_name }}') is not null
+        and json_value(data, '$.meta.action') = 'D'
 ),
 
 deletes as (
