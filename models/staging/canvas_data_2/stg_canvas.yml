@@ -1,0 +1,741 @@
+version: 2
+
+models:
+  - name: stg_canvas_accounts
+    description: "Stores data about account objects in the Canvas system. Accounts are most often used to represent a hierarchy of colleges, schools, departments, campuses."
+    columns:
+      - name: id
+        description: "The ID of the Account object."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: uuid
+        description: "The UUID of the account."
+      - name: name
+        description: "The display name of the account."
+      - name: parent_account_id
+        description: "The account's parent ID, or NULL if this is the root account."
+      - name: sis_source_id
+        description: "Correlated id for the record for this course in the SIS system (assuming SIS integration is configured)"
+      - name: current_sis_batch_id
+        description: "The ID of the currently processing SIS (Student Information System) batch (if submitted via UI, not API)."
+      - name: default_locale
+        description: "Language for the account."
+      - name: default_time_zone
+        description: "The default time zone of the account. Allowed time zones are IANA time zones or friendlier Ruby on Rails time zones."
+      - name: course_template_id
+        description: "The course selected as a template for new courses created in this account. 0 if a template should not be used, nor inherited."
+      - name: lti_context_id
+        description: "UUID of the Canvas context in LTI standard. Secondary ID for this context, could be used in API to identify resource as well."
+      - name: integration_id
+        description: "The account's identifier in the Student Information System."
+      - name: consortium_parent_account_id
+        description: "The root account of the consortium account, if this root account is part of a consortium."
+      - name: storage_quota
+        description: "The storage quote for the account, in megabytes."
+      - name: default_storage_quota
+        description: "The storage quota for children accounts in megabytes, if not otherwise specified."
+      - name: default_user_storage_quota
+        description: "The default storage quota for users in the account in megabytes, if not otherwise specified."
+      - name: default_group_storage_quota
+        description: "The storage quota for a group in the account in megabytes, if not otherwise specified."
+      - name: workflow_state
+        description: "Life-cycle state for account."
+      - name: created_at
+        description: "Timestamp of when the account was created."
+      - name: updated_at
+        description: "Timestamp of when the account was updated."
+      - name: deleted_at
+        description: "Timestamp of when the account was deleted. Will only ever be NULL for end customers."
+
+  - name: stg_canvas_assignment_groups
+    description: "Stores rules associated with an assignment group."
+    columns:
+      - name: id
+        description: "The ID of the assignment group. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: name
+        description: "The name of the assignment group."
+      - name: context_id
+        description: "The unique identifier for the assignments group context (course). Foreign key to courses.id."
+      - name: context_type
+        description: "The type of object represented by context_id."
+      - name: default_assignment_name
+        description: "The default title for an assignment when it is created in this assignment group."
+      - name: group_weight
+        description: "The weight of the assignment group."
+      - name: migration_id
+        description: "The unique identifier of the migration that imported this assignment group."
+      - name: sis_source_id
+        description: "The Student Information System source ID of the assignment group."
+      - name: position
+        description: "The position of the assignment group."
+      - name: drop_highest
+        description: "Number of highest scores to be dropped for each user."
+      - name: drop_lowest
+        description: "Number of lowest scores to be dropped for each user."
+      - name: never_drop
+        description: "Assignment IDs that should never be dropped. E.g.: [33, 17, 24]."
+      - name: workflow_state
+        description: "Life-cycle state for the assignment group."
+      - name: created_at
+        description: "The time when the assignment group was created."
+      - name: updated_at
+        description: "The time when the assignment group was updated."
+
+  - name: stg_canvas_assignment_override_students
+    description: "Stores measures related to ad hoc users for whom an assignment override exists."
+    columns:
+      - name: id
+        description: "The ID of the Assignment Override Student. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: user_id
+        description: "Identifies the user. Foreign key to users.id."
+      - name: assignment_id
+        description: "Identifies the assignment the override is associated with. Foreign key to assignments.id."
+      - name: quiz_id
+        description: "Identifies the quiz the override is associated with. Foreign key to quizzes.id."
+      - name: assignment_override_id
+        description: "Identifies the assignment override dimension. Foreign key to assignment_overrides.id."
+      - name: workflow_state
+        description: "Life-cycle state for assignment override students record."
+      - name: created_at
+        description: "Timestamp of when the assignment_override_student record was created."
+      - name: updated_at
+        description: "Timestamp of when the assignment_override_student was last updated."
+
+  - name: stg_canvas_assignments
+    description: "This table stores attributes for assignments. There is one record in this table for each assignment."
+    columns:
+      - name: id
+        description: "Primary key for this record in the Canvas assignments table. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: assignment_title
+        description: "Title of the assignment."
+      - name: points_possible
+        description: "The maximum points possible for the assignment."
+      - name: grading_type
+        description: "The type of grading the assignment receives."
+      - name: assignment_group_id
+        description: "Identifies which assignment grouping the particular assignment is part of (assignment groups may have a scoring weight to determine how much of the assignment group contributes to the total grade). Foreign key to assignment_groups.id."
+      - name: context_id
+        description: "The ID of the object this assignment belongs to. Typically course. Foreign key to courses.id."
+      - name: context_type
+        description: "The type of object this assignment belongs to."
+      - name: omit_from_final_grade
+        description: "If true, the assignment will be omitted from the student's final grade."
+      - name: grader_count
+        description: "The maximum number of provisional graders who may issue grades for this assignment. Only relevant for moderated assignments. Must be a positive value, and must be set to 1 if the course has fewer than two active instructors. Otherwise, the maximum value is the number of active instructors in the course minus one, or 10 if the course has more than 11 active instructors."
+      - name: position
+        description: "The sorting order of the assignment in the group."
+      - name: workflow_state
+        description: "Current workflow state of the assignment."
+      - name: created_at
+        description: "The time at which this assignment was originally created."
+      - name: updated_at
+        description: "The time at which this assignment was last modified."
+
+  - name: stg_canvas_course_account_associations
+    description: "An explicit place to keep track of all the the accounts in the account hierarchy that a course belongs to."
+    columns:
+      - name: id
+        description: "The unique identifier for a course account association record. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: course_id
+        description: "Identifies the course. Foreign key to courses.id."
+        tests:
+          - not_null
+      - name: account_id
+        description: "Identifies the accounts dataset. Points to the account associated with the course. Could be Canvas root account or sub-account ID. Foreign key to accounts.id."
+        tests:
+          - not_null
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: course_section_id
+        description: "Identifies the course section. Foreign key to course_sections.id."
+      - name: depth
+        description: "How many steps in the account chain are between the courses' direct account (course.account_id) and the account_id of the association."
+      - name: created_at
+        description: "Timestamp of when the record was created."
+      - name: updated_at
+        description: "Timestamp of when the record was updated."
+
+  - name: stg_canvas_course_sections
+    description: "Stores attributes for a section of a course. Sections are a group of students that have been organized for administrative purposes. When users are enrolled in a course, they are actually enrolled in one of the sections of that course. It is possible to place more than one section in course, but it is not possible to put sections within sections. All sections of a course share the same content. If a course is taught by one instructor, sections can remain under one course. However, if each section is taught by a different instructor, those sections will need to be housed under separate courses. Each section can have its own varied due dates for assignments, quizzes, and discussions. For example, a course may have sections that meet on different days of the week or in different formats (online vs. face-to-face). Sections are also beneficial when Teacher Assistants are assigned to help manage courses and oversee grading for a portion of a course enrollment. As part of SIS or manual enrollments, you can limit students to only see students in their section. Instructors can also limit students if you allow them to manually enroll users in their own courses."
+    columns:
+      - name: id
+        description: "The unique identifier for the section. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: course_id
+        description: "The unique Canvas identifier for the course in which the section belongs. Foreign key to courses.id."
+        tests:
+          - not_null
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: course_section_name
+        description: "The name of the section."
+      - name: sis_batch_id
+        description: "The unique identifier for the SIS import if created through SIS. Foreign key to sis_batches.id."
+      - name: sis_source_id
+        description: "Id for the correlated record for the section in the SIS (assuming SIS integration has been properly configured)."
+      - name: integration_id
+        description: "The integration ID of the section. This field is only included if there is an integration set up between Canvas and SIS."
+      - name: restrict_enrollments_to_section_dates
+        description: "Restrict user enrollments to the start and end dates of the section. True when 'Users can only participate in the course between these dates' is checked."
+      - name: default_section
+        description: "True if this is the default section."
+      - name: accepting_enrollments
+        description: "True if this section is open for enrollment."
+      - name: nonxlist_course_id
+        description: "The unique identifier of the original course of a cross-listed section. Foreign key to courses.id."
+      - name: enrollment_term_id
+        description: "Identifies the associated enrollment term. Foreign key to enrollment_terms.id."
+      - name: workflow_state
+        description: "Life-cycle state for the section."
+      - name: start_date
+        description: "The start date for the section, if applicable. When a user is allowed to participate in a course. enrollment term dates, course dates, and course section dates flow together in all aspects of Canvas. Various dates allow different users to participate in the course. The hierarchy of dates are: course section dates override course dates, course dates override term dates."
+      - name: end_date
+        description: "The end date for the section, if applicable. When a user is allowed to participate in a course."
+      - name: created_at
+        description: "Timestamp for when this section was entered into the system."
+      - name: updated_at
+        description: "Timestamp for when the last time the section was updated."
+
+  - name: stg_canvas_courses
+    description: "Stores attributes for a course."
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+
+  - name: stg_canvas_enrollment_states
+    description: "Stores the state of an enrollment."
+    columns:
+      - name: enrollment_id
+        description: "The ID of the enrollment. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: state
+        description: "State of the user enrollment."
+      - name: state_is_current
+        description: "Indicates if the enrollment state is current or needs recalculation."
+      - name: restricted_access
+        description: "Indicates if the enrollment is allowed to view the course."
+      - name: access_is_current
+        description: "Indicates if the state is within the start and valid until bounds."
+      - name: state_started_at
+        description: "Indicates the date that the enrollment state should take effect."
+      - name: state_valid_until
+        description: "Indicates the date that the enrollment state becomes stale."
+      - name: updated_at
+        description: "Timestamp of when an enrollment_states record was updated."
+
+  - name: stg_canvas_enrollment_terms
+    description: "Stores enrollment term records that describe the term or semester associated with courses (e.g. Fall 2013). Use the dates in this table as a proxy for the course start/end dates if the start_at and end_at fields in the courses table are NULL."
+    columns:
+      - name: id
+        description: "The unique identifier for the enrollment term. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: name
+        description: "The name of the term."
+      - name: start_at
+        description: "The datetime of the start of the term. Set up by the administrator. Enrollment term dates, course dates, and course section dates flow together in all aspects of Canvas; various dates allow different users to participate in the course. The hierarchy of dates are: course section dates override course dates, course dates override term dates."
+      - name: end_at
+        description: "The datetime of the end of the term. Set up by the administrator."
+      - name: sis_source_id
+        description: "The SIS ID of the term. Only included if the user has permission to view SIS information."
+      - name: sis_batch_id
+        description: "The unique identifier for the SIS import. This field is only included if the user has permission to manage SIS information. Foreign key to sis_batches.id."
+      - name: integration_id
+        description: "The ID of the enrollment term in the external tools or SIS, this ID usually gets populated via API or SIS import."
+      - name: term_code
+        description: "Enrollment term code as viewed in the UI."
+      - name: grading_period_group_id
+        description: "Identifies the grading period group. Foreign key to grading_period_groups.id."
+      - name: workflow_state
+        description: "Life-cycle state for the term."
+      - name: created_at
+        description: "Timestamp of when the enrollment term was created."
+      - name: updated_at
+        description: "Timestamp of when the enrollment term was last updated."
+
+  - name: stg_canvas_enrollments
+    description: "This table stores user enrollments. An enrollment represents a user's association with a specific course and section. There may be multiple records associated with a course_id and user_id combination (records are unique on: course_id, user_id, course_section_id, role_id, workflow_state, associated_user_id)."
+    columns:
+      - name: id
+        description: "The ID of the enrollment. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: course_id
+        description: "The unique ID of the course. Foreign key to courses.id."
+        tests:
+          - not_null
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: user_id
+        description: "The unique ID of the user. Foreign key to users.id."
+      - name: course_section_id
+        description: "The Section Integration ID in which the enrollment is associated. This field is only included if the user has permission to view SIS information. Foreign key to course_sections.id."
+      - name: role_id
+        description: "The ID of the enrollment role. Foreign key to roles.id."
+      - name: sis_batch_id
+        description: "The unique identifier for the SIS import. This field is only included if the user has permission to manage SIS information. Foreign key to sis_batches.id."
+      - name: start_at
+        description: "The start time of the enrollment, in ISO8601 format."
+      - name: end_at
+        description: "The end time of the enrollment, in ISO8601 format."
+      - name: completed_at
+        description: "Enrollment completed date."
+      - name: sis_pseudonym_id
+        description: "If enrolled via SIS import, which pseudonym was referenced to create this enrollment. It's the user ID that was referenced when an enrollment was created via SIS. it's used for some LTI calls to try and send consistent IDs. also used for splitting accidentally-merged-users to decide which way the enrollments should go. Foreign key to pseudonyms.id."
+      - name: type
+        description: "The base enrollment type."
+      - name: grade_publishing_status
+        description: "Used internally with grade passback functionality."
+      - name: associated_user_id
+        description: "The unique ID of the associated user. Will be NULL unless type is ObserverEnrollment. Foreign key to users.id."
+      - name: self_enrolled
+        description: "Enrollment was created via self-enrollment."
+      - name: limit_privileges_to_course_section
+        description: "User can only access his or her own course section."
+      - name: last_activity_at
+        description: "The last activity time of the user for the enrollment. This time stamp updates when a user navigates through the course using the Course Navigation menu, replies to a discussion or submits an assignment or quiz, and when they access course files and pages (does not include mobile interactions or group participation)."
+      - name: total_activity_time
+        description: "The total activity time of the user for the enrollment, in seconds. If user is viewing a page and is enrolled in that particular course, then the time is incremented. Requires at least 2 minutes, but not more than 10 (for ex: if a student just checks their grade or due date and was on the page for less than 2 min, it doesn't get counted). May not be incremented for page views through mobile app (will get incremented for page views through mobile browser); does not include group activity or page views for videos that do not include intermediate page requests, such as a half-hour recorded lecture."
+      - name: last_attended_at
+        description: "The last attended date of the user for the enrollment in a course. The UI facing field that could be set by an end user or API call."
+      - name: workflow_state
+        description: "Life-cycle state for the user's enrollment in the course."
+      - name: created_at
+        description: "The created time of the enrollment."
+      - name: updated_at
+        description: "The updated time of the enrollment."
+  
+  - name: stg_canvas_grading_periods
+    description: "Stores attributes for grading period. A Grading period is like a 'term', essentially used for splitting up the grade book into 'periods'."
+    columns:
+      - name: id
+        description: "The unique identifier for the grading period."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: title
+        description: "The title for the grading period."
+      - name: weight
+        description: "A weight value that contributes to the overall weight of a grading period set, used to calculate how much assignments in this period contribute to the total grade."
+      - name: grading_period_group_id
+        description: "Surrogate ID to the grading period group dataset."
+      - name: start_date
+        description: "The start date of the grading period."
+      - name: end_date
+        description: "The end date of the grading period."
+      - name: close_date
+        description: "Grades can only be changed before this close date of the grading period."
+      - name: workflow_state
+        description: "Life-cycle state for the grading periods."
+      - name: created_at
+        description: "Timestamp when record was created."
+      - name: updated_at
+        description: "Timestamp when record was last updated."
+
+  - name: stg_canvas_pseudonyms
+    description: "This table stores user pseudonyms. Pseudonyms are login profiles associated with users. Contains user / account relationship (may contain multiple records per user_id if that user_id is associated with multiple accounts); note: not all users can be found in the pseudonyms table."
+    columns:
+      - name: id
+        description: "Primary key for this pseudonym in the the Canvas database. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: integration_id
+        description: "The integration_id associated with the user."
+      - name: user_id
+        description: "Id for the user associated with this pseudonym. Foreign key to users.id."
+        tests:
+          - not_null
+      - name: account_id
+        description: "Identifies the account associated with this pseudonym. Typically root account ID unless account user belongs to trust/consortium based Canvas accounts. Foreign key to accounts.id."
+      - name: sis_batch_id
+        description: "The ID of the SIS import. Foreign key to sis_batches.id."
+      - name: unique_id
+        description: "The unique login ID for the user. This is what the user uses to log in to Canvas."
+      - name: login_count
+        description: "The count of all user logins."
+      - name: failed_login_count
+        description: "Only applies to accounts that use Canvas authentication settings."
+      - name: last_request_at
+        description: "Timestamp of when the user last logged in with this pseudonym."
+      - name: last_login_at
+        description: "Timestamp of last time a user logged in with this pseudonym."
+      - name: current_login_at
+        description: "Timestamp of when the user logged in."
+      - name: last_login_ip
+        description: "IP address recorded the last time a user logged in with this pseudonym."
+      - name: current_login_ip
+        description: "IP address of user's previous login id, this value could be the same as last_login_ip."
+      - name: sis_user_id
+        description: "The SIS ID associated with the user."
+      - name: authentication_provider_id
+        description: "The authentication provider this login is associated with. This can be the integer ID of the provider, or the type of the provider (in which case, it will find the first matching provider). Foreign key to authentication_providers.id."
+      - name: position
+        description: "Position of user's login credentials."
+      - name: workflow_state
+        description: "Life-cycle state for the pseudonym."
+      - name: created_at
+        description: "Timestamp when this pseudonym was created in Canvas."
+      - name: updated_at
+        description: "Timestamp when this pseudonym was last updated in Canvas."
+      - name: deleted_at
+        description: "Timestamp when the pseudonym was deleted (NULL if the pseudonym is still active)."
+
+  - name: stg_canvas_quiz_submissions
+    description: "Stores attributes for the last submitted quiz. This tables persists one record per user_id and quiz_id."
+    columns:
+      - name: id
+        description: "The ID of the quiz submission. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: submission_id
+        description: "The ID of the Submission the quiz submission represents. Foreign key to submissions.id."
+      - name: user_id
+        description: "The ID of the Student that made the quiz submission. Foreign key to users.id."
+      - name: quiz_id
+        description: "The ID of the Quiz the quiz submission belongs to. Foreign key to quizzes.id."
+        tests:
+          - not_null
+      - name: quiz_version
+        description: "The version of the quiz this submission is related to."
+      - name: started_at
+        description: "The time at which the student started the quiz submission."
+      - name: finished_at
+        description: "The time at which the student submitted the quiz submission."
+      - name: end_at
+        description: "The time at which the quiz submission will be overdue, and be flagged as a late submission."
+      - name: score
+        description: "The score of the quiz submission, if graded."
+      - name: attempt
+        description: "For quizzes that allow multiple attempts, this field specifies the quiz submission attempt number."
+      - name: kept_score
+        description: "For quizzes that allow multiple attempts, this is the score that will be used, which might be the score of the latest, or the highest, quiz submission."
+      - name: fudge_points
+        description: "Number of points the quiz submissions score was fudged by."
+      - name: quiz_points_possible
+        description: "The amount of points possible for the quiz."
+      - name: extra_attempts
+        description: "Number of times the student was allowed to retake the quiz over the multiple-attempt limit."
+      - name: temporary_user_code
+        description: "Construct for previewing a quiz."
+      - name: extra_time
+        description: "Amount of extra time allowed for the quiz submission, in minutes."
+      - name: manually_scored
+        description: "Indicates if this submission was graded by the teacher."
+      - name: manually_unlocked
+        description: "The student can take the quiz even if it's locked for everyone else."
+      - name: was_preview
+        description: "Indicates if this submission was created from a teacher preview."
+      - name: score_before_regrade
+        description: "The original score of the quiz submission prior to any re-grading."
+      - name: has_seen_results
+        description: "Whether the student has viewed their results to the quiz."
+      - name: workflow_state
+        description: "Life-cycle state for the quiz submission."
+      - name: created_at
+        description: "Time when the quiz submission was created."
+      - name: updated_at
+        description: "Time when the quiz submission was last updated."
+
+  - name: stg_canvas_roles
+    description: "A user is assigned a role which grants all the permissions associated with that role. Roles have a few implicit permissions and a large set of default permissions, which can be customized with RoleOverrides."
+    columns:
+      - name: id
+        description: "The unique identifier for a user role record. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: name
+        description: "The name of the role."
+      - name: account_id
+        description: "Points to the account associated with the course. Could be Canvas root account or sub-account ID. Foreign key to accounts.id."
+      - name: base_role_type
+        description: "The role type that is being used as a base for this role. For account-level roles, this is AccountMembership. For course-level roles, it is an enrollment type."
+      - name: workflow_state
+        description: "The state of the role."
+      - name: created_at
+        description: "Timestamp of when a roles record was created."
+      - name: updated_at
+        description: "Timestamp of when a roles record was updated."
+      - name: deleted_at
+        description: "Timestamp when this record was deleted. If the record has not been deleted the value will be NULL."
+
+  - name: stg_canvas_scores
+    description: "This table stores assignment group and course grades for students enrolled in a course."
+    columns:
+      - name: id
+        description: "The ID of the score. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: enrollment_id
+        description: "The ID of the enrollment object this score refers to. Foreign key to enrollments.id."
+        tests:
+          - not_null
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: assignment_group_id
+        description: "The ID of the assignment group this score refers to, or NULL if it does not refer to a particular assignment group. Foreign key to assignment_groups.id."
+      - name: grading_period_id
+        description: "The ID of the grading period covered by this score, or NULL if it does not apply to a specific grading period. If this is NULL, this is the overall score for the course. Foreign key to grading_periods.id."
+      - name: course_score
+        description: "True if this score does not refer to a particular grading period or assignment group (in other words, if it represents the overall score for the course referred to in the enrollment)."
+      - name: current_points
+        description: "The number of points earned over all assignments covered by this score, with dropped assignments excluded."
+      - name: unposted_current_points
+        description: "The total number of points earned over all assignments covered by this score, including muted/unposted assignments."
+      - name: final_points
+        description: "The number of points earned over all assignments covered by this score, with dropped assignments excluded and unposted submissions treated as 0."
+      - name: unposted_final_points
+        description: "The number of points earned over all assignments covered by this score, with dropped assignments excluded and unposted submissions treated as 0, including muted/unposted assignments."
+      - name: current_score
+        description: "The current score for the assignments represented by this Score object."
+      - name: unposted_current_score
+        description: "The current score, with muted/unposted assignments included."
+      - name: final_score
+        description: "The final score for the assignments represented by this Score object, calculated by treating ungraded assignments as though they received zero points."
+      - name: unposted_final_score
+        description: "The final score, with muted/unposted assignments included."
+      - name: override_score
+        description: "The override score, if one has been set."
+      - name: workflow_state
+        description: "Life-cycle state for the score."
+      - name: created_at
+        description: "Time when the score was created."
+      - name: updated_at
+        description: "Time when the score was updated."
+
+  - name: stg_canvas_submissions
+    description: "This table stores submission records for an assignment."
+    columns:
+      - name: id
+        description: "Primary key of this record in the Canvas submissions dataset."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: course_id
+        description: "The ID of the associated assignment's course."
+        tests:
+          - not_null
+      - name: user_id
+        description: "The ID of the user who created the submission."
+      - name: assignment_id
+        description: "The ID of the associated assignment."
+        tests:
+          - not_null
+      - name: attachment_id
+        description: "The ID of an attachment belonging to this submission if submission_type is online_url. Generally superseded by attachment_ids."
+      - name: attachment_ids
+        description: "A comma-delimited string representing the IDs of attachments belonging to this submission."
+      - name: media_comment_id
+        description: "For media comments, the ID of the media object associated with this comment, as a string."
+      - name: media_comment_type
+        description: "For media comments, the type of the media object associated with this comment."
+      - name: group_id
+        description: "Foreign key to the groups table."
+      - name: cached_due_date
+        description: "The de-normalized cached due date for this submission."
+      - name: posted_at
+        description: "The date this submission was posted to the student, or NULL if it has not been posted."
+      - name: submission_type
+        description: "The type of submission."
+      - name: submitted_at
+        description: "The timestamp when the assignment was submitted. Note: this date may be missing even though the assignment was submitted and graded (example scenarios: paper assignments, submissions through external tools, no submission required, etc.); additionally, if the student failed to submit an assignment by the due date, the assignment can be graded by the instructor (and will be missing a submitted_at date)."
+      - name: quiz_submission_id
+        description: "Foreign key to the quiz_submissions dataset (if submission_type is online_quiz). If this field contains a value it means that the assignment is a quiz."
+      - name: extra_attempts
+        description: "Extra submission attempts allowed for the given user and assignment."
+      - name: grading_period_id
+        description: "The ID of the grading period that this submission's assignment belongs to."
+      - name: graded_at
+        description: "Timestamp of when the submission was graded."
+      - name: grader_id
+        description: "The ID of the user who graded the submission. This will be NULL for submissions that haven't been graded yet. It will be a positive number if a real user has graded the submission and a negative number if the submission was graded by a process (e.g. Quiz auto-grader and auto-grading LTI tools). Specifically auto-graded quizzes set grader_id to the negative of the quiz ID. Submissions auto-graded by LTI tools set grader_id to the negative of the tool ID."
+      - name: submission_comments_count
+        description: "A count of the number of comments made on this submission."
+      - name: media_object_id
+        description: "The ID of the associated MediaObject."
+      - name: turnitin_data
+        description: "A YAML string representing plagiarism data associated with this submission."
+      - name: graded_anonymously
+        description: "Denotes how the grading has been performed. Possible values are graded_anonymously and not_graded_anonymously."
+      - name: anonymous_id
+        description: "A unique short ID identifying this submission without reference to the owning user."
+      - name: late_policy_status
+        description: "The status of the submission in relation to the late policy. Only reflects statuses manually applied by a grader. Can be late, missing, none, or NULL."
+      - name: points_deducted
+        description: "The amount of points automatically deducted from the score by the missing/late policy for a late or missing assignment."
+      - name: seconds_late_override
+        description: "For late submissions, the amount of time (in seconds) the submission is late by."
+      - name: student_entered_score
+        description: "A 'what-if' score that the student has entered for this submission."
+      - name: score
+        description: "The raw score."
+      - name: grade
+        description: "Letter grade mapped from the score by the grading scheme."
+      - name: published_score
+        description: "The raw score (identical to score)."
+      - name: published_grade
+        description: "Valid only for a graded submission. The values are strings that reflect the grading type used. For example, a scoring method of points will show 4 if given a 4 out of 5, and a scoring method of letter grade will show B for the same score (assuming a grading scale where 80-90% is a B). Defaults to NULL."
+      - name: grade_matches_current_submission
+        description: "A boolean flag which is false if the student has re-submitted since the submission was last graded. Valid only when a score has been assigned to a submission. This is set to false if a student makes a new submission to an already graded assignment. This is done to indicate that the current grade given by the teacher is not for the most recent submission by the student. It is set to true if a score has been given and there is no new submission. Defaults to NULL."
+      - name: excused
+        description: "Whether the assignment is excused. Excused assignments have no impact on a user's grade."
+      - name: attempt
+        description: "The number of attempts made including this one."
+      - name: processed
+        description: "Valid only when there is a file/attachment associated with the submission. By default, this attribute is set to false when making the assignment submission. When a submission has a file/attachment associated with it, upon submitting the assignment a snapshot is saved and its value is set to true. Defaults to NULL."
+      - name: cached_quiz_lti
+        description: "True if the associated assignment is a Quizzes.Next assignment."
+      - name: cached_tardiness
+        description: "The status of the submission in relation to the late policy, including automatically- applied statuses. Can be late, missing or NULL."
+      - name: lti_user_id
+        description: "The LTI context ID of the submitter."
+      - name: redo_request
+        description: "True if the assignment has been reassigned to the student for resubmission."
+      - name: resource_link_lookup_uuid
+        description: "When the submission is from an LTI tool, the resource link lookup ID is assigned to the submission in order to recover the custom parameters."
+      - name: body
+        description: "The content of the submission, if it was submitted directly in a text field."
+      - name: url
+        description: "URL content for the submission."
+      - name: last_comment_at
+        description: "The date of the last non-draft comment on this submission by a user other than the submitter."
+      - name: workflow_state
+        description: "Life-cycle state for the submission."
+      - name: created_at
+        description: "Timestamp of when the submission was created."
+      - name: updated_at
+        description: "Timestamp of when the submission was last updated."
+
+  - name: stg_canvas_users
+    description: "This table stores attributes for users."
+    columns:
+      - name: id
+        description: "The ID of the user. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_metadata
+        description: "Datetime of metadata."
+      - name: date_extracted
+        description: "Datetime extracted from Canvas."
+      - name: storage_quota
+        description: "The storage quota for the users."
+      - name: lti_context_id
+        description: "UUID of the Canvas context in LTI standard. secondary ID for this context, could be used in API to identify resource as well."
+      - name: sortable_name
+        description: "The name of the user that is should be used for sorting groups of users, such as in the gradebook. Format: 'lastname, firstname'."
+      - name: avatar_image_url
+        description: "If avatars are enabled, this field will be included and contain a url to retrieve the user's avatar."
+      - name: avatar_image_source
+        description: "The source of a user avatar image."
+      - name: avatar_image_updated_at
+        description: "Timestamp that shows the last time the avatar image was updated."
+      - name: short_name
+        description: "A short name the user has selected, for use in conversations or other less formal places through the site."
+      - name: last_logged_out
+        description: "The last time the user explicitly logged out of Canvas."
+      - name: pronouns
+        description: "stores a list of preferred gender pronouns i.e.: she/her; he/him; they/them."
+      - name: merged_into_user_id
+        description: "If this user was merged into another one, this is the foreign key to that other user. Foreign key to users.id."
+      - name: locale
+        description: "The user's locale. This is an optional field and may not be entered by the user."
+      - name: name
+        description: "The name of the user ('firstname lastname' format)."
+      - name: time_zone
+        description: "This field is only returned in certain API calls, and will return the IANA time zone name of the user's preferred timezone."
+      - name: uuid
+        description: "UUID of the user."
+      - name: school_name
+        description: "Used in Trial Versions of Canvas, the school the user is associated with."
+      - name: school_position
+        description: "Used in Trial Versions of Canvas, the position the user has at the school. E.g. Admin"
+      - name: public
+        description: "Used in Trial Versions of Canvas, the type of school the user is associated with."
+      - name: workflow_state
+        description: "Workflow status indicating the status of the user."
+      - name: created_at
+        description: "Timestamp when the user was created in the Canvas system."
+      - name: updated_at
+        description: "Timestamp that shows the last time the record was updated."
+      - name: deleted_at
+        description: "Timestamp that shows when a user was deleted at."
