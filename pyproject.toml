@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "3.9.10"
 dbt-bigquery = "^1.5.1"
+dagster-dbt = "0.21.9"
 
 [tool.poetry.group.dev.dependencies]
 sqlfluff = "=2.1.1"
